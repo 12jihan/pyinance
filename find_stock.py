@@ -15,69 +15,72 @@ import pymongo
 client = pymongo.MongoClient('mongodb://localhost:27017/')
 db = client['pyinance']
 collection = db['most-active']
-stock = "plug"
-
-x = ureq.urlopen("https://finance.yahoo.com/quote/" + stock + "?p=" + stock).read()
-soup = BeautifulSoup(x, "html.parser")
-title = soup.find_all('h1')[0]
-data = {
-    "stock_price": soup.find_all('span')[27],
-    "stock_change": soup.find_all('span')[28],
-}
 
 
-# num = 0
-# for x in title:
-    # symbol_len = len(x.text.split(' '))
-    # symbol = x.text.split(' ')[symbol_len - 1]
-    # symbol_len = len(symbol)
-    # symbol = list(symbol)
-    # symbol.pop(0)
-    # symbol.pop(symbol_len - 2)    
-    # symbol = ''.join(symbol)
 
-    # name = x
-    # name = x.split(" ")
-    # name_len = len(name)
-    # name.pop(name_len - 1)
-    # name = ' '.join(name)
+class Stock_Info:
 
-    # print("------------------------")
-    # print(name)
-    # print(num)
-    # num += 1 
-# cycling through every span to find what i need and marking it:
-# for x in data:
-#     print("---------------")
-#     print(x)
-#     print(num)
-#     num += 1
+    
+    def __init__(self, symbol):
+        
+        # takes a symbol that's entered in:
+        self.stock_symbol = symbol.replace(' ', '')
+        
+        # url used to try and find the stock that's needed:
+        self.url = ureq.urlopen("https://finance.yahoo.com/quote/" + self.stock_symbol + "?p=" + self.stock_symbol).read()
 
+        # beautiful soup shit:
+        self.soup = BeautifulSoup(self.url, "html.parser")
+        self.title = self.soup.find_all('h1')[0]
+        self.stock_data = {
+            "Stock_Symbol": self.__find_symbol_title__()['Stock_Symbol'],
+            "Stock_Name": self.__find_symbol_title__()['Stock_Name'],
+            "stock_price": float(self.soup.find_all('span')[27].text.replace(',','')),
+            "stock_change_amount": self.__fix_stock_change__()[0],
+            "stock_change_percent": self.__fix_stock_change__()[1],
+        }
 
-def find_symbol_title(x):
+    def __find_symbol_title__(self):
 
-    symbol_len = len(x.text.split(' '))
-    symbol = x.text.split(' ')[symbol_len - 1]
-    symbol_len = len(symbol)
-    symbol = list(symbol)
-    symbol.pop(0)
-    symbol.pop(symbol_len - 2)    
-    symbol = ''.join(symbol)
+        symbol_len = len(self.title.text.split(' '))
+        symbol = self.title.text.split(' ')[symbol_len - 1]
+        symbol_len = len(symbol)
+        symbol = list(symbol)
+        symbol.pop(0)
+        symbol.pop(symbol_len - 2)    
+        symbol = ''.join(symbol)
 
 
-    name = x.text
-    name = name.split(' ')
-    name_len = len(name)
-    name.pop(name_len - 1)
-    name = ' '.join(name)
+        name = self.title.text
+        name = name.split(' ')
+        name_len = len(name)
+        name.pop(name_len - 1)
+        name = ' '.join(name)
 
-    print({
-        "Stock_Symbol": symbol,
-        "Stock_Name": name
-    })
-    return ({
-        "Stock_Symbol": symbol,
-        "Stock_Name": name
-    })
 
-find_symbol_title(title)
+        return ({
+            "Stock_Symbol": symbol,
+            "Stock_Name": name
+        })
+    def __fix_stock_change__(self):
+        change = self.soup.find_all('span')[28].text
+        change = change.split(" ")
+        change_amt = float(change[0])
+        change_per = list(change[1])
+        change_per_len = len(change_per)
+        change_per.pop(0)
+        change_per.pop(change_per_len - 2)    
+        change_per.pop(change_per_len - 3)    
+        change_per = float(''.join(change_per))
+
+        return [
+            change_amt,
+            change_per
+        ]
+        
+
+while 1 == 1:
+    print("what stock are you looking for?")
+    y = input()
+    x = Stock_Info(y)
+    print(x.stock_data)
