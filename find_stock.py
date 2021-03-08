@@ -62,6 +62,7 @@ class Stock_Info:
             "Stock_Symbol": symbol,
             "Stock_Name": name
         })
+        
     def __fix_stock_change__(self):
         change = self.soup.find_all('span')[28].text
         change = change.split(" ")

@@ -20,6 +20,7 @@ info = dir(collection)
 for x in info:
     print("\n" + x)
 # print(db.collection_names())
+
 def most_active_stocks():
     # Goes to yahoo finances
     x = ureq.urlopen("https://finance.yahoo.com/most-active").read()
