@@ -7,7 +7,20 @@ import urllib.error as uerror
 import json
 import re
 
+import pymongo
 
+client = pymongo.MongoClient('mongodb://localhost:27017/')
+db = client['pyinance']
+collection = db['most-active']
+
+print("collection info: \n", collection)
+
+
+info = dir(collection)
+
+for x in info:
+    print("\n" + x)
+# print(db.collection_names())
 def most_active_stocks():
     # Goes to yahoo finances
     x = ureq.urlopen("https://finance.yahoo.com/most-active").read()
@@ -30,6 +43,7 @@ def most_active_stocks():
         }
 
         print(stock_info)
-
+        collection.insert_one(stock_info)
+        print('inserted: ', stock_info['symbol'])
 
 most_active_stocks()
