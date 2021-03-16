@@ -5,12 +5,14 @@ import urllib.error as uerror
 
 import json
 import re
+import time
+import uuid
 
 import pymongo
 
 client = pymongo.MongoClient('mongodb://localhost:27017/')
 db = client['pyinance']
-collection = db['most-active']
+collection = db['stocks']
 
 print("collection info: \n", collection)
 
@@ -31,6 +33,7 @@ def most_active_stocks():
         data1 = list(data0.children)
 
         stock_info = {
+            "_id": str(uuid.uuid4()),
             "symbol": data1[0].text,
             "name": data1[1].text,
             "price": float(data1[2].text),
@@ -39,7 +42,8 @@ def most_active_stocks():
             "volume": data1[5].text,
             "avg_volume": data1[6].text,
             "market_cap": data1[7].text,
-            "pe_ratio": data1[8].text
+            "pe_ratio": data1[8].text,
+            "last_update": int(time.time())
         }
 
         print(stock_info)
