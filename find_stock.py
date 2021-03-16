@@ -9,14 +9,13 @@ import urllib.error as uerror
 
 import json
 import re
+import time
 
 import pymongo
 
 client = pymongo.MongoClient('mongodb://localhost:27017/')
 db = client['pyinance']
 collection = db['most-active']
-
-
 
 class Stock_Info:
 
@@ -38,6 +37,7 @@ class Stock_Info:
             "stock_price": float(self.soup.find_all('span')[27].text.replace(',','')),
             "stock_change_amount": self.__fix_stock_change__()[0],
             "stock_change_percent": self.__fix_stock_change__()[1],
+            "time_updated": int(time.time())
         }
 
     def __find_symbol_title__(self):
