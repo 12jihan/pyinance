@@ -80,8 +80,8 @@ class Stock_Info:
         ]
         
 
-while 1 == 1:
+while True:
     print("what stock are you looking for?")
-    y = input()
+    stock_symbol = input()
     x = Stock_Info(y)
     print(x.stock_data)
