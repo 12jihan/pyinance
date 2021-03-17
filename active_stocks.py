@@ -1,27 +1,14 @@
 from bs4 import BeautifulSoup
 import urllib.request as ureq
-import urllib.parse as uparse
-import urllib.error as uerror
+# import urllib.parse as uparse
+# import urllib.error as uerror
 
 import json
 import re
 import time
 import uuid
 
-import pymongo
 
-client = pymongo.MongoClient('mongodb://localhost:27017/')
-db = client['pyinance']
-collection = db['stocks']
-
-# print("collection info: \n", collection)
-
-
-info = dir(collection)
-
-# for x in info:
-#     # print("\n" + x)
-# print(db.collection_names())
 
 def most_active_stocks():
     # Goes to yahoo finances
@@ -47,7 +34,5 @@ def most_active_stocks():
         }
 
         print(stock_info)
-        # collection.insert_one(stock_info)
-        # print('inserted: ', stock_info['symbol'])
 
 most_active_stocks()
